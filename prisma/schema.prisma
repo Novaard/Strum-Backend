@@ -1,0 +1,45 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Device {
+  id             String      @id // device_id dari ESP32
+  ipAddress      String?
+  lastSeen       DateTime    @default(now())
+  status         String      @default("off") // off, idle, on_duty
+  voltase        Int         @default(0)
+  arus           Int         @default(0)
+  suhu           Int         @default(0)
+  kelembapan     Int         @default(0)
+  thresholdIdle  Int         @default(0)
+  thresholdDuty  Int         @default(0)
+  logs           DeviceLog[]
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+}
+
+model DeviceLog {
+  id          String   @id @default(uuid())
+  deviceId    String
+  device      Device   @relation(fields: [deviceId], references: [id], onDelete: Cascade)
+  timestamp   DateTime
+  voltase     Int
+  arus        Int
+  status      String
+  suhu        Int
+  kelembapan  Int
+  createdAt   DateTime @default(now())
+
+  @@index([deviceId])
+  @@index([timestamp]) // Index untuk optimasi query statistik berdasarkan waktu
+}
