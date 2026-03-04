@@ -1,6 +1,6 @@
 # ⚡ Strum-Backend (IoT Telemetry Server)
 
-Backend server berkinerja tinggi untuk memproses dan menyimpan data telemetri dari perangkat IoT (Internet of Things). Dibangun menggunakan ekosistem modern yang super cepat: **Bun**, **ElysiaJS**, **Prisma ORM** (dengan PostgreSQL), dan **MQTT Protocol**.
+Backend server untuk memproses dan menyimpan data telemetri dari perangkat IoT (Internet of Things). Dibangun menggunakan ekosistem modern yang super cepat: **Bun**, **ElysiaJS**, **Prisma ORM** (dengan PostgreSQL), dan **MQTT Protocol**.
 
 ---
 
