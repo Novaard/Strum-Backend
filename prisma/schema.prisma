@@ -13,33 +13,35 @@ datasource db {
 }
 
 model Device {
-  id             String      @id // device_id dari ESP32
-  ipAddress      String?
-  lastSeen       DateTime    @default(now())
-  status         String      @default("off") // off, idle, on_duty
-  voltase        Int         @default(0)
-  arus           Int         @default(0)
-  suhu           Int         @default(0)
-  kelembapan     Int         @default(0)
-  thresholdIdle  Int         @default(0)
-  thresholdDuty  Int         @default(0)
-  logs           DeviceLog[]
-  createdAt      DateTime    @default(now())
-  updatedAt      DateTime    @updatedAt
+  id        String      @id // device_id
+  status    String      @default("off") // off, idle, on_duty (diekstrak untuk indexing/stats cepat)
+  lastSeen  DateTime    @default(now())
+  rawData   Json        // Menyimpan raw json payload terakhir
+  logs      DeviceLog[]
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
 }
 
 model DeviceLog {
-  id          String   @id @default(uuid())
-  deviceId    String
-  device      Device   @relation(fields: [deviceId], references: [id], onDelete: Cascade)
-  timestamp   DateTime
-  voltase     Int
-  arus        Int
-  status      String
-  suhu        Int
-  kelembapan  Int
-  createdAt   DateTime @default(now())
+  id        String   @id @default(uuid())
+  deviceId  String
+  device    Device   @relation(fields: [deviceId], references: [id], onDelete: Cascade)
+  timestamp DateTime
+  status    String   // off, idle, on_duty
+  rawData   Json     // Raw json payload saat itu
+  createdAt DateTime @default(now())
 
-  @@index([deviceId])
-  @@index([timestamp]) // Index untuk optimasi query statistik berdasarkan waktu
+  @@index([deviceId, timestamp]) // Penting untuk query kalkulasi durasi/summary
+  @@index([timestamp])
+}
+
+model User {
+  id       String @id @default(uuid())
+  username String @unique
+  password String // Disimpan dalam bentuk hash (bcrypt/argon2)
+}
+
+model AppConfig {
+  key   String @id // "operational_hours"
+  value Json   // {"start": "08:00", "end": "17:00"}
 }
